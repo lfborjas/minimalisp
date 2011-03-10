@@ -60,7 +60,7 @@ class Object
         end
     end
     
-    def _eval(a)
+    def _eval(a=[])
 
         #it self it's an atom, just resolve it in the environment
         if atom? then a.assoc(self)
