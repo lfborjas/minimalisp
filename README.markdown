@@ -15,9 +15,9 @@ I did this in an afternoon and didn't even write a parser, but you can use it li
     [[lambda,
         [:x],
             [:cond,
-              [[:eq, :x, 'nothing-to-see-here],'move-along]
-              [:t,'go-ahead]]]
-      'nothing-to-see-here]._eval([
+              [[:eq, :x, [:quote, :nothing-to-see-here]], :move-along]
+              [:t, [:quote, :go-ahead]]]]
+      [:quote, :nothing-to-see-here]]._eval([
         #you'd put the environment here...
       ])
 
