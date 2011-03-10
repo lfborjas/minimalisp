@@ -11,7 +11,8 @@ end
 
 class String
     def to_sexp
-        gsub(/[()]/, "").split /\s+/
+        return self unless self =~ /\s+/
+        gsub(/[()]/, "").split(/\s+/).collect{|s| s.gsub(/('(\w+))/){"(quote #{$2})"}.to_sexp}
     end
     
     def atom?
