@@ -10,10 +10,13 @@ class Array
 end
 
 class String
+=begin
     def to_sexp
-        return self unless self =~ /\s+/
-        gsub(/[()]/, "").split(/\s+/).collect{|s| s.gsub(/('(\w+))/){"(quote #{$2})"}.to_sexp}
+        return gsub!(/('(\w+))/){"(quote #{$2})"} if include?("'") and !(self =~ /\s+/)
+        return self.to_sym unless self =~ /\s+/
+        gsub(/\s+/, " ").slice(1..-1).scan(/\w+|\(.*\)/).collect{|e| e.to_sexp}
     end
+=end
     
     def atom?
         true
