@@ -68,7 +68,7 @@ class Object
 
         #and function definitions    
         elsif caar.eq? :label
-            caddar.cons(cdr).cons(list(cadar, car))._eval(a)
+            caddar.cons(cdr)._eval cons([[cadar, car]])
         elsif caar.eq? :lambda
             #join the environments
             caddar._eval(a.append(cadar.pair(cdr.evlis(a))))
