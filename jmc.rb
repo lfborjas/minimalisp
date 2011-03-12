@@ -3,10 +3,12 @@
 class Array
     alias :pair :zip
     alias :append :concat
-    alias_method :_assoc, :assoc
+
+    #to avoid stack overflow while testing, 'cause it could be called twice
+    alias_method(:_assoc, :assoc) unless method_defined? :_assoc
     def assoc(k)
         return k if k.is_a? Fixnum
-        _assoc(k).cadr
+        _assoc(k).cadr unless _assoc(k).nil?
     end
 end
 
