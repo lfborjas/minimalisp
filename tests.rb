@@ -128,8 +128,22 @@ class LispTest < Test::Unit::TestCase
             [:quote, [1,2,3]], [:quote, [5,6,7]]
         ]._eval(
              [[:null?, [:lambda, [:l], [:eq?, :l, [:quote, []]]]]]
+        ) == [1,2,3,5,6,7]
+    end
+    
+    must "eval higher order functions" do
+
+        t? [[:label, :maplist,
+                [:lambda, [:x, :p],
+                    [:cond,
+                        [[:null?, :x], [:quote, []]],
+                        [:t, [:cons, [:p, :x], [:maplist, [:cdr, :x], :p]]]]]],
+            [:quote, [1,2,3,2]], [:quote, [:lambda, [:e], [:eq?, :e, 2]]]
+        ]._eval(
+             [[:null?, [:lambda, [:l], [:eq?, :l, [:quote, []]]]]]
         )
     end
+
 end
 
 
