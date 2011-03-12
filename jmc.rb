@@ -51,7 +51,6 @@ class Object
     end
     
     def _eval(a=[])
-
         #it self it's an atom, just resolve it in the environment
         if atom? then a.assoc(self)
 
@@ -68,10 +67,10 @@ class Object
 
         #and function definitions    
         elsif caar.eq? :label
-            caddar.cons(cdr)._eval cons([[cadar, car]])
+            caddar.cons(cdr)._eval [cadar, car].cons(a)
         elsif caar.eq? :lambda
             #join the environments
-            caddar._eval(a.append(cadar.pair(cdr.evlis(a))))
+            caddar._eval cadar.pair(cdr.evlis(a)).append(a) 
         else
             raise "Malformed sexp: #{self}"
         end
