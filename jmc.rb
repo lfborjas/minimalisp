@@ -10,14 +10,6 @@ class Array
     end
 end
 
-=begin
-    def to_sexp
-        return gsub!(/('(\w+))/){"(quote #{$2})"} if include?("'") and !(self =~ /\s+/)
-        return self.to_sym unless self =~ /\s+/
-        gsub(/\s+/, " ").slice(1..-1).scan(/\w+|\(.*\)/).collect{|e| e.to_sexp}
-    end
-=end
-
 class Object
     def quote
         self
@@ -29,7 +21,7 @@ class Object
     end
 
     def cons(l)
-        [self, l]
+        [self] + l
     end
 
     def eq?(o)
@@ -94,18 +86,6 @@ class Object
         #to evaluate lambda expressions
         if empty? then []
         else car._eval(a).cons cdr.evlis(a)
-        end
-    end
-end
-
-#The REPL:
-if __FILE__ == $PROGRAM_NAME
-    require 'readline'
-    while instr = Readline.readline('> ', true)
-        begin
-            puts "=> #{instr.to_sexp._eval([])}"
-        rescue Exception => e
-            puts "In #{instr}:\n #{e}"
         end
     end
 end
