@@ -10,7 +10,6 @@ class Array
     end
 end
 
-class String
 =begin
     def to_sexp
         return gsub!(/('(\w+))/){"(quote #{$2})"} if include?("'") and !(self =~ /\s+/)
@@ -18,11 +17,6 @@ class String
         gsub(/\s+/, " ").slice(1..-1).scan(/\w+|\(.*\)/).collect{|e| e.to_sexp}
     end
 =end
-    
-    def atom?
-        true
-    end
-end
 
 class Object
     def quote
@@ -39,7 +33,7 @@ class Object
     end
 
     def eq?(o)
-        self.to_sym.eql?(o) if o.is_a? Symbol
+        return self.to_sym.eql?(o) if o.is_a? Symbol
         eql? o
     end
 
