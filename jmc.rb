@@ -7,7 +7,7 @@ class Array
     #to avoid stack overflow while testing, 'cause it could be called twice
     alias_method(:_assoc, :assoc) unless method_defined? :_assoc
     def assoc(k)
-        return k if k.is_a? Fixnum
+        return k if k.is_a? Fixnum or [:t, :f].include? k
         _assoc(k).cadr unless _assoc(k).nil?
     end
 end
@@ -90,4 +90,11 @@ class Object
         else car._eval(a).cons cdr.evlis(a)
         end
     end
+end
+
+module Kernel
+    def eval!(o)
+        o.send :_eval
+    end
+    module_function :eval!
 end
