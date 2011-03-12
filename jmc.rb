@@ -5,6 +5,7 @@ class Array
     alias :append :concat
     alias_method :_assoc, :assoc
     def assoc(k)
+        return k if k.is_a? Fixnum
         _assoc(k).cadr
     end
 end
@@ -29,6 +30,7 @@ class Object
     end
 
     def atom?
+        return true if self.is_a? String
         !self.respond_to? :each
     end
 
