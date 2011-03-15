@@ -118,7 +118,11 @@ end
 if __FILE__ == $0
     require 'readline'
     while exp = Readline.readline("screem > ", true)
-        puts "=> #{eval!(exp.to_sexp).to_lisp}"
+        begin
+            puts "=> #{eval!(exp.to_sexp).to_lisp}"
+        rescue Exception => e
+            puts "~> #{e.inspect}"
+        end
     end
 end
 
