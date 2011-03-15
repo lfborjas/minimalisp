@@ -19,17 +19,12 @@ end
 
 
 class Object
-    def atom?
-        return true if self.is_a? String
-        !self.respond_to? :each
-    end
-
     def to_atom
         Integer(self) rescue Float(self) rescue to_sym
     end
 
     def to_lisp
-        self.is_a? Array ? "(#{self.collect{|v| v.to_lisp}.join(' ')})" : self.to_s
+        self.is_a?(Array) ? "(#{self.collect{|v| v.to_lisp}.join(' ')})" : self.to_s
     end
 end
 
@@ -61,7 +56,7 @@ end
 
 Kernel::Global_env = Env.new.instance_eval do |e|
     #add the math methods:
-    Math.__module_init__.each{|m| e[m] = lambda{|*args| Math.send(m, *args)}}
+    (Math.methods - Object.methods).each{|m| e[m.to_sym] = lambda{|*args| Math.send(m, *args)}}
 
     #now, add the other expected methods:
     #binary:
@@ -86,8 +81,8 @@ Kernel::Global_env = Env.new.instance_eval do |e|
     e
 end
 
-def eval!(x, env)
-    if    x.atom?         
+def eval!(x, env=Global_env)
+    if    x.is_a? Symbol
         env.find(x)[x] 
     elsif !x.is_a?(Array)
         x              
@@ -123,7 +118,7 @@ end
 if __FILE__ == $0
     require 'readline'
     while exp = Readline.readline("screem > ", true)
-        puts "=> #{eval!(exp.to_sexp, Global_env)}"
+        puts "=> #{eval!(exp.to_sexp)}"
     end
 end
 
