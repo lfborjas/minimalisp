@@ -1,5 +1,7 @@
 #((lambda (x) (if (eq x 'nothing-to-see-here) 'move-along 'go-ahead)) 'nothing-to-see-here)
 
+##JMC
+
 Yes, another aborted lisp. This one based on Paul Graham's essay: 
 ["The roots of lisp"](http://www.paulgraham.com/rootsoflisp.html)
 Wrote it and uploaded here
@@ -22,3 +24,13 @@ I did this in an afternoon and didn't even write a parser, but you can use it li
       ])
 
 Or something like that.
+
+A scheme implementation of the same LISP (McCarthy's lisp) is also provided, although it was never tested.
+
+##Norvig
+
+This one, a Scheme interpreter, is inspired by Peter Norvig's [lispy](http://norvig.com/lispy.html) and the tests (and hopefully completion) is taken from [lispy2](http://norvig.com/lispy2.html). 
+
+It greatly differs from the latter in that it doesn't represent _everything_ as an array in the environment, but instead uses ruby Objects. Also, the environment is preloaded with lots of math functions and some lisp functions you'd expect in scheme. 
+
+This one does have a REPL, just run `ruby norvig.rb` and have fun.
