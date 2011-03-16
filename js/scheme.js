@@ -126,7 +126,7 @@ Array.prototype.to_lisp = function(){
 //http://erik.eae.net/archives/2005/06/06/22.13.54/
 
 function to_lisp(o){
-    return o['to_lisp'] ? o.to_lisp() : o.toString();
+    return !o && "nil" || (o['to_lisp'] ? o.to_lisp() : o.toString());
 }
 
 //now, the REPL, using jquery-console
