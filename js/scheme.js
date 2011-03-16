@@ -53,9 +53,10 @@ global_env = (function(e){
 })(new Env());
 
 function _eval(x, env){
-   env = typeof env == "undefined" ? global_env : env;
-   if(typeof x == "string")
+   env = (typeof env == "undefined") ? global_env : env;
+   if(typeof x == "string"){
        return env.find(x)[x];
+   }
    else if(!(x instanceof Array))
        return x;
    else
@@ -63,7 +64,7 @@ function _eval(x, env){
         case "quote":
             return x[1];
         case "if":
-            return _eval(_eval(x[1], env) ? x[2] : x[3]);
+            return _eval(_eval(x[1], env) ? x[2] : x[3], env);
         case "set!":
             env.find(x[1])[x[1]] = _eval(x[2], env)
             break;
@@ -108,6 +109,7 @@ String.prototype.to_sexp = function(){
     }
 
     atom = function(e){
+        if(e=="0") return 0;
         return Number(e) || e.toString() ;
     }
     e = this;//somehow, calling this directly below caused infinite recursion (at least in the node REPL)
