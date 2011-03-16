@@ -1,11 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>lfborjas/progra2 @ GitHub</title>
+	<title>Scheme in js</title>
 	
 	<style type="text/css">
 		body {
@@ -34,39 +32,39 @@
     }
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
-     div#park { font-size: 14px }
-      div#park div.jquery-console-inner 
+     div#repl { font-size: 14px }
+      div#repl div.jquery-console-inner 
        { width:700px; height:200px; background:#333; padding:0.5em;
          overflow:auto }
-      div#park div.jquery-console-prompt-box
+      div#repl div.jquery-console-prompt-box
        { color:#fff; font-family:monospace; }
-      div#park div.jquery-console-focus span.jquery-console-cursor 
+      div#repl div.jquery-console-focus span.jquery-console-cursor 
        { background:#fefefe; color:#333; font-weight:bold }
-      div#park div.jquery-console-message-error
+      div#repl div.error
        { color:#ef0505; font-family:sans-serif; font-weight:bold;
          padding:0.1em; }
-      div#park div.jquery-console-message-value , 
+      div#repl div.jquery-console-message-value , 
        { color:red font-family:monospace;
          padding:0.1em; }
-      div#park div.feedback, .jquery-console-welcome
+      div#repl div.feedback, .jquery-console-welcome
        { color:#1ad027; font-family:monospace;
          padding:0.1em; }
       .menu{
         color:#fafafa; font-family:monospace;
       }
-      div#park span.jquery-console-prompt-label { font-weight:bold }
+      div#repl span.jquery-console-prompt-label { font-weight:bold }
 </style>
-    <script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="./js/jquery.console.js"></script>
-    <script src="./js/lisp.js"></script>
+    <script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="jquery.console.js"></script>
+    <script src="scheme.js"></script>
 </head>
 
 <body>
     <div id="container">
-        <h1>Parque javásico</h1>
-        <div id="park">
-            
+        <h1>Scheme in Javascript</h1>
+        <em>based on <a href="http://norvig.com/lispy.html">lis.py</a></em>
+        <div id="repl">
         </div>
-  </div>
+    </div>
 </body>
 </html>

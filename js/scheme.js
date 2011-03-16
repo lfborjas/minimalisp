@@ -1,14 +1,15 @@
 //Javascript translation of lis.py
 //Original by Peter Norvig: http://norvig.com/lispy.html
-
 /*For representing the environments (a.k.a a simple symbol table)*/
+
+
 Env = function(params, args, outer){
     for (var i = 0; params && i < params.length ; i++) {
         this[params[i]] = args[i]; 
     };
     this.outer = outer;
 
-    /*Find the innermost environment for the variable v*/
+    //Find the innermost environment for the variable v
     this.find = function(v){
       return (this[v] !== undefined ? this : this.outer.find(v));
     };
@@ -17,11 +18,15 @@ Env = function(params, args, outer){
 //The global environment, with pre-defined operations
 global_env = (function(e){
     //Add all math methods
-    Object.getOwnPropertyNames(Math).forEach(function(m){
-        if(typeof Math[m] == "function"){
-            e[m] = function(){return Math[m].call(this, Array.prototype.slice.call(arguments))} ;
-        }
-    });
+    try{
+        Object.getOwnPropertyNames(Math).forEach(function(m){
+            if(typeof Math[m] == "function"){
+                e[m] = function(){return Math[m].call(this, Array.prototype.slice.call(arguments))} ;
+            }
+        });
+    }catch(r){
+        //no math methods for you :(
+    }
     //binary ops
     "+ - * / > < >= <= == ===".split(" ").forEach(function(o){
         e[o] = function(a,b){return eval(a+o+b)}
@@ -51,7 +56,7 @@ function _eval(x, env){
    env = typeof env == "undefined" ? global_env : env;
    if(typeof x == "string")
        return env.find(x)[x];
-   else if(!x instanceof Array)
+   else if(!(x instanceof Array))
        return x;
    else
        switch(x[0]){
@@ -74,10 +79,10 @@ function _eval(x, env){
             return val;
         default:
             exps = x.map(function(exp){
-               _eval(exp, env); 
+               return _eval(exp, env); 
             });
             fun = exps.shift()
-            return fun.apply(this, exps)
+            return fun.apply(this, exps);
        }
 }
 
@@ -109,14 +114,40 @@ String.prototype.to_sexp = function(){
     return read_from(e.replace(/[()]/g, function(match){return " "+match+" "}).split(/\s+/).slice(1,-1));
 }
 
-Object.prototype.to_lisp = function(){
-    return this.toString();
-}
-
 Array.prototype.to_lisp = function(){
     return "("+
             this.map(function(e){
-                return e.to_lisp();
+                return to_lisp(e);
             }).join(" ")
             +")";
 }
+
+//was extending the object prototype, but that turns out to be verboten...
+//http://erik.eae.net/archives/2005/06/06/22.13.54/
+
+function to_lisp(o){
+    return o['to_lisp'] ? o.to_lisp() : o.toString();
+}
+
+//now, the REPL, using jquery-console
+$(function(){
+     var console1 = $('<div class="console1"></div>');
+     $('#repl').append(console1);
+     var controller1 = console1.console({
+         promptLabel: "jscm >",
+         commandValidate: function(line){
+           return true; 
+         },
+         commandHandle: function(line){
+               try{
+                    return [{msg: to_lisp(_eval(line.to_sexp())), className: "feedback"}];
+               }catch(e){
+                    return [{msg: e.message, className:"error"}];
+               }
+         },
+       autofocus:true,
+       animateScroll:true,
+       promptHistory:true,
+     });
+
+});
