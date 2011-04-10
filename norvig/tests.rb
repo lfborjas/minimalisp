@@ -1,7 +1,7 @@
 #Tests for the ruby translation of Peter Norvig's Lispy
 #These are also his: http://norvig.com/lispy2.html
 
-require 'norvig'
+require './norvig.rb'
 require 'test/unit'
 
 module Test::Unit

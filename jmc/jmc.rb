@@ -10,11 +10,20 @@ class Array
         return k if k.is_a? Fixnum or [:t, :f].include? k
         _assoc(k).cadr unless _assoc(k).nil?
     end
+
 end
 
 class Object
     def quote
         self
+    end
+
+    def to_atom
+        Integer(self) rescue Float(self) rescue to_sym
+    end
+
+    def to_lisp
+        self.is_a?(Array) ? "(#{self.collect{|v| v.to_lisp}.join(' ')})" : self.to_s
     end
 
     def atom?
@@ -96,4 +105,39 @@ module Kernel
         o.send :_eval
     end
     module_function :eval!
+end
+
+
+class String
+
+    def to_sexp
+        read_from(self.gsub(/([()])/){|m| " #{m} "}.split)
+    end
+
+    private
+        def read_from(tokens)
+            raise "Unexpected EOF while reading" unless tokens.length > 0
+            token = tokens.shift
+            case token
+                when '(' 
+                    l = []
+                    l << read_from(tokens) until tokens.first == ")"
+                    tokens.shift
+                    l
+                when ')' then raise "Syntax error: unexpected ')'"
+                else token.to_atom
+            end
+        end
+end
+
+
+if __FILE__ == $0
+    require 'readline'
+    while exp = Readline.readline("LISP > ", true)
+        begin
+            puts "=> #{eval!(exp.to_sexp).to_lisp}"
+        rescue Exception => e
+            puts "~> #{e.inspect}"
+        end
+    end
 end
