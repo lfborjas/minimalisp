@@ -104,4 +104,28 @@ class SchemeTest < Test::Unit::TestCase
     t? _!("((repeat riff-shuffle) (list 1 2 3 4 5 6 7 8))") == :"(1 3 5 7 2 4 6 8)"
     t? _!("(riff-shuffle (riff-shuffle (riff-shuffle (list 1 2 3 4 5 6 7 8))))") == :"(1 2 3 4 5 6 7 8)"
    end
+
+   must "Throw syntax errors" do
+       wrong = lambda do |exp, msg|
+           exc = assert_raise(SyntaxError){_!(exp)}
+           t? exc == msg
+       end
+
+       wrong.call("()", "(): wrong length")
+       wrong.call("(set! x)", "(set! x): wrong length")
+       wrong.call "(define 3 4)", "(define 3 4): can define only a symbol"
+       wrong.call "(quote 1 2)", "(quote 1 2): wrong length"
+       wrong.call "(if 1 2 3 4)" , "(if 1 2 3 4): wrong length"
+       wrong.call "(lambda 3 3)" , "(lambda 3 3): illegal lambda argument list"
+       wrong.call "(lambda (x))" , "(lambda (x)): wrong length"
+       wrong.call "(if (= 1 2) (define-macro a 'a) ", "(define-macro a (quote a)): define-macro only allowed at top level"   
+   end
+
+   must "check arguments" do
+       _! "(define (twice x) (* 2 x))"
+       t? _!("(twice 2)") == 4
+       exc = assert_raise(TypeError) {_!("(twice 2 2)")}
+       t? exc == "TypeError expected (x), given (2 2)"
+   end
+
 end

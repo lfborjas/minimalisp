@@ -1,6 +1,9 @@
 #Inspired by Peter Norvig's lisp.py
 #http://norvig.com/lispy.html
 
+#for ruby 1.9.2:
+callcc{} rescue require 'continuation'
+
 class Env < Hash
     attr_accessor :outer
     def initialize(parms=[], args=[], outer=nil)
