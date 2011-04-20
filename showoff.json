@@ -1,0 +1,11 @@
+{ 
+    "name": "Lisp en lisp", 
+    "sections": [
+         {"section":"primitives"} ,
+         {"section":"functions"} ,
+         {"section":"utils"} ,
+         {"section":"surprise"} ,
+         {"section":"aftermath"} 
+         ],
+     "options": {"syntax": "emacs"}
+}
