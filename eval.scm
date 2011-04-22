@@ -47,6 +47,7 @@
 (define lookup
     (lambda (var env)
         (cond 
+            ((null? env) false)
             ((eq? (caar env) var) (cadar env))
             (true (lookup var (cdr env))))))
 
@@ -56,7 +57,7 @@
 (define eval
   (lambda (exp env)
     (cond 
-      ((number? exp) exp)
+      ;((number? exp) exp); not necessary!
       ((symbol? exp) (lookup exp env))
       ((eq? (car exp) 'quote) (cadr exp))
       ((eq? (car exp) 'lambda) 
@@ -66,15 +67,36 @@
       ((eq? (car exp 'define))
         (cons (list (cadr exp) (eval (caddr exp) env))
               env))
-      (else (apply (eval (car exp) env) (evlist (cdr exp) env))))))
+      (true (apply (eval (car exp) env) (evlist (cdr exp) env))))))
 
+;checks clauses
+(define evcond (clauses env)
+    (cond ((eval (caar clauses) env) (eval (cadar clauses) env))
+          (true (evcond (cdr clauses) env))))
+
+;evals a list and returns the results
+(define evlist (l env)
+    (cond ((null? l) '())
+          (true (cons (eval (car l) env)
+                      (evlist (cdr l) env)))))
 
 (define apply 
     (lambda (proc args)
         (cond 
+            ;un poco de trampa...
+            ((lookup proc env0) (proc args))
             ((eq? (car proc) 'closure)
                 (eval (cadadr proc);the body 
                       (cons
-                            (pair-up (caadr proc);the arg list
-                                     args)
-                            (caddr proc)))))));the env
+                        (pair-up (caadr proc);the arg list
+                                 args)
+                        (caddr proc)))))));the env
+
+(define env0
+    ;el entorno inicial: podría tener de todo!
+    (pair-up 
+        '(symbol? eq? car cdr cons)
+        ;Estos se llaman así por casualidad, podrían ser cualquier cosa
+        (symbol? eq? car cdr cons)))
+
+
