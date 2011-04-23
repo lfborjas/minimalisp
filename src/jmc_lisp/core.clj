@@ -12,7 +12,7 @@
   (first (rest (first l))))
 
 (defn frest [l]
-  (first (rest [l])))
+  (first (rest l)))
 
 (defn frrest [l]
   (first (rest (rest l))))
