@@ -18,7 +18,7 @@
      '((def f (fn [x] (= x 2))) 2) true)
 
 ;Test stuff with an environ
-(are [exp env res] (= (_eval exp (cons '((true true) (false false)) env)) res)
+(are [exp env res] (= (_eval exp (cons '(false false) (cons '(true true) env))) res)
      '(empty? (quote ())) '((empty? (fn [l] (= l (quote ()))))) true
      '(empty? (quote (1 2))) '((empty? (fn [l] (= l (quote ()))))) false 
      '((def cadar 
@@ -35,6 +35,6 @@
                       (cond 
                         (empty? x) (quote ())
                         true (cons (p x) (maplist (rest x) p))))) 
-         (quote (1 2 3 2)) (quote (fn [e] (= e 2)))) '((empty? 
+         (quote (true false true false)) (quote (fn [e] (= e false)))) '((empty? 
                                                            (fn [l]
                                                                    (= l (quote ()))))) '(false true false true)) 
