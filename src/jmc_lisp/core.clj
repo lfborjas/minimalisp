@@ -1,4 +1,5 @@
-(ns jmc_lisp.core)
+(ns jmc_lisp.core
+  (:use clojure.pprint))
 
 ;Primitives:
 ;quote, coll?, =, first, rest, cons, cond
@@ -19,6 +20,9 @@
 
 (defn frrfirst [l]
   (first (rest (rest (first l)))))
+
+(defn rrest [l]
+  (rest (rest l)))
 
 ;the functions:
 
@@ -55,6 +59,7 @@
 (declare _eval evcond evlist)
 
 (defn _eval [exp env]
+  ;(pprint [exp env])
   (cond 
     (_not (coll? exp)) (lookup exp env)
     (_not (coll? (first exp)))
@@ -85,7 +90,7 @@
   (cond 
     (_eval (first clauses) env)
       (_eval (frest clauses) env)
-    true (evcond (rest clauses) env)))
+    true (evcond (rrest clauses) env)))
 
 (defn evlist [m env]
   (cond 
