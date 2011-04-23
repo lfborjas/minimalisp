@@ -3,22 +3,22 @@
   (:use [clojure.test]))
 
 ;Test stuff without an environ
-(are [exp res] (= (eval! exp '()) res)
+(are [exp res] (= (_eval exp '((true true) (false false))) res)
      '(quote x) 'x
      '(coll? 1) false
-     '(coll? (1 2)) true
+     '(coll? (quote (1 2))) true
      '(= 2 2) true
      '(= 3 4) true
      '(first (quote (1 2 3))) 1
      '(rest (quote (1 2 3))) '(2 3)
-     '(cons 1 (quote (2 3))) '(1 2 3)
-     '(cond (eq? 2 2) true true false) true 
-     '(cond (eq? 2 3) false true true) true
+     '(cons (quote 1) (quote (2 3))) '(1 2 3)
+     '(cond (= 2 2) true true false) true 
+     '(cond (= 2 3) false true true) false 
      '((fn [x] (coll? x)) 1) false
      '((def f (fn [x] (= x 2))) 2) true)
 
 ;Test stuff with an environ
-(are [exp env res] (= (eval! exp env) res)
+(are [exp env res] (= (_eval exp (cons '((true true) (false false)) env)) res)
      '(empty? (quote ())) '((empty? (fn [l] (= l (quote ()))))) true
      '(empty? (quote (1 2))) '((empty? (fn [l] (= l (quote ()))))) false 
      '((def cadar 
