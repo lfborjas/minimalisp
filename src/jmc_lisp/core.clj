@@ -103,8 +103,9 @@
 
 (defn- eval-with-env0 [exp]
     (cond 
+      ;this could go above, but I don't want to fuck up the purity of eval
       (and (coll? exp) (= (first exp) 'def)) (swap! *env0* conj (rest exp))
-      :else (prn (_eval exp @*env0*))))
+      :else (_eval exp @*env0*)))
 
 (defn -main [& args]
   (clojure.main/repl :eval eval-with-env0 :prompt (fn [] (pr 'LISP>))))
