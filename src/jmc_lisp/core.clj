@@ -99,8 +99,12 @@
     true (cons (_eval (first m) env)
                (evlist (rest m) env))))
 
+(def *env0* (atom '((true true) (false false))))
+
 (defn- eval-with-env0 [exp]
-  (prn (_eval exp '((true true) (false false)))))
+    (cond 
+      (and (coll? exp) (= (first exp) 'def)) (swap! *env0* conj (rest exp))
+      :else (prn (_eval exp @*env0*))))
 
 (defn -main [& args]
   (clojure.main/repl :eval eval-with-env0 :prompt (fn [] (pr 'LISP>))))
