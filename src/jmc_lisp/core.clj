@@ -1,5 +1,6 @@
 (ns jmc_lisp.core
-  (:use clojure.pprint))
+  (:use clojure.pprint)
+  (:gen-class))
 
 ;Primitives:
 ;quote, coll?, =, first, rest, cons, cond
@@ -97,3 +98,9 @@
     (_empty? m) '()
     true (cons (_eval (first m) env)
                (evlist (rest m) env))))
+
+(defn- eval-with-env0 [exp]
+  (prn (_eval exp '((true true) (false false)))))
+
+(defn -main [& args]
+  (clojure.main/repl :eval eval-with-env0 :prompt (fn [] (pr 'LISP>))))
