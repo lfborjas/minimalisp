@@ -1,5 +1,6 @@
 (ns jmc_lisp.core
   (:use clojure.pprint)
+  (:require clojure.main)
   (:gen-class))
 
 ;Primitives:
@@ -99,6 +100,9 @@
     true (cons (_eval (first m) env)
                (evlist (rest m) env))))
 
+;;;;;;;;; NON ESSENTIAL STUFF ;;;;;;;;;
+;global variable, it turns out that clojure is purely functional and 
+;globals are REALLY hard to achieve, but that's good, I guess.
 (def *env0* (atom '((true true) (false false))))
 
 (defn- eval-with-env0 [exp]
@@ -109,3 +113,4 @@
 
 (defn -main [& args]
   (clojure.main/repl :eval eval-with-env0 :prompt (fn [] (pr 'LISP>))))
+
