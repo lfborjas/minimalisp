@@ -84,7 +84,7 @@
     (lambda (proc args)
         (cond 
             ;un poco de trampa...
-            ((lookup proc env0) (proc args))
+            ((primitive? proc) (proc args))
             ((eq? (car proc) 'closure)
                 (eval (cadadr proc);the body 
                       (cons
