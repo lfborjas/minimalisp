@@ -77,7 +77,8 @@ function initializePresentation(prefix) {
 		timeout: 0
 	})
 
-	setupMenu()
+	//setupMenu()
+    $("#navmenu").hide()
 	if (slidesLoaded) {
 		showSlide()
 	} else {
