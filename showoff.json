@@ -2,10 +2,7 @@
     "name": "Lisp en lisp", 
     "sections": [
          {"section":"primitives"} ,
-         {"section":"functions"} ,
-         {"section":"utils"} ,
-         {"section":"surprise"} ,
-         {"section":"aftermath"} 
+         {"section":"functions"} 
          ],
-     "options": {"syntax": "emacs"}
+     "options": {"syntax": "default"}
 }

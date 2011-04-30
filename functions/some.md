@@ -96,6 +96,37 @@
 
 !SLIDE code
 
-    @@@clj
-    (_eval '((fn [x] (_not (coll? x))) 'a))
+    @@@clojure
+    (defn evcond [clauses env]
+      (cond 
+        (_eval (first clauses) env)
+          (_eval (frest clauses) env)
+        true (evcond (rrest clauses) env))) 
+
+!SLIDE code
+
+    @@@clojure
+    (defn evlist [m env]
+      (cond 
+        (_empty? m) '()
+        true (cons (_eval (first m) env)
+                   (evlist (rest m) env))))
+
+!SLIDE bullets
+
+##Referencias
+
+* [El trabajo original de McCarthy](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
+* [La re-interpretación de Paul Graham](http://www.paulgraham.com/rootsoflisp.html)
+* [Clojure](http://clojure.org/)
+* [El curso que va a cambiar tu vida](http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/)
+* [Bookmarks en delicious](http://www.delicious.com/lfborjas/barcamp4+lisp)
+
+!SLIDE bullets
+##Código
+
+* [El código fuente en esta presentación](https://github.com/lfborjas/minimalisp/tree/clojure)
+* [Lisp en javascript](https://github.com/lfborjas/minimalisp/tree/javascript)
+* [Lisp en ruby](https://github.com/lfborjas/minimalisp)
+* [Lisp en python](http://norvig.com/lispy.html)
 

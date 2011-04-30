@@ -12,7 +12,7 @@
 
 # `((fn [p1 p2 ...] exp) a1 a2 ...)`
 
-!SLIDE code
+!SLIDE code small
 
     @@@clj
     user=> ((fn [p1 p2 p3] 'exp) a1 a2 a3)
