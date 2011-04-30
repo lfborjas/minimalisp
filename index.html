@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Lisp en lisp</title>
+
+  <link rel="stylesheet" href="./css/reset.css" type="text/css"/>
+  <link rel="stylesheet" href="./css/showoff.css" type="text/css"/>
+  <link rel="stylesheet" href="./css/syntax/default.css" type="text/css"/>
+
+  <script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.cycle.all.js"></script>
+	<script type="text/javascript" src="./js/jquery-print.js"></script>
+  <script type="text/javascript" src="./js/jquery.batchImageLoad.js"></script>
+
+  <script type="text/javascript" src="./js/jquery.doubletap-0.1.js"></script>
+
+  <script type="text/javascript" src="./js/fg.menu.js"></script>
+  <script type="text/javascript" src="./js/showoff.js"></script>
+  <script type="text/javascript" src="./js/jTypeWriter.js"> </script>
+  <script type="text/javascript" src="./js/core.js"></script>
+  <script type="text/javascript" src="./js/showoffcore.js"></script>
+
+  <link type="text/css" href="./css/fg.menu.css" media="screen" rel="stylesheet" />
+  <link type="text/css" href="./css/theme/ui.all.css" media="screen" rel="stylesheet" />
+
+  
+
+  
+
+  <script type="text/javascript">
+  $(function(){
+    setupPreso(false, './');
+  });
+  </script>
+</head>
+
+<body>
+
+
+<a tabindex="0" href="#search-engines" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" id="navmenu"><span class="ui-icon ui-icon-triangle-1-s"></span>slides</a>
+<div id="navigation" class="hidden"></div>
+
+<div id="help">
+  <table>
+    <tr><td class="key">space, &rarr;</td><td>next slide</td></tr>
+    <tr><td class="key">&larr;</td><td>previous slide</td></tr>
+    <tr><td class="key">d</td><td>debug mode</td></tr>
+    <tr><td class="key">## &lt;ret&gt;</td><td>go to slide #</td></tr>
+    <tr><td class="key">c</td><td>table of contents (vi)</td></tr>
+    <tr><td class="key">f</td><td>toggle footer</td></tr>
+    <tr><td class="key">r</td><td>reload slides</td></tr>
+    <tr><td class="key">z</td><td>toggle help (this)</td></tr>
+  </table>
+</div>
+
+<div class="buttonNav">
+  <input type="submit" onClick="prevStep();" value="prev"/>
+  <input type="submit" onClick="nextStep();" value="next"/>
+</div>
+
+<div id="preso">loading presentation...</div>
+<div id="footer">
+  <span id="slideInfo"></span>
+  <span id="debugInfo"></span>
+</div>
+
+<div id="slides" class="offscreen" style="display:none;">
+<div class="slide" data-transition="none"><div class="content" ref="primitives/intro/1">
+<h1>Construyendo un lenguaje: lisp en lisp</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="primitives/intro/2">
+<h2>Para probar:</h2>
+
+<ul>
+<li>Pod&#xE9;s usar el verdadero lenguaje ac&#xE1; <a href="http://try-clojure.org/">http://try-clojure.org/</a></li>
+<li>O bajar este int&#xE9;rprete. <a href="http://lfborjas.com/lisp.jar">http://lfborjas.com/lisp.jar</a>
+(y correrlo con <code>java -jar lisp.jar</code>)</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="primitives/intro/3">
+<h1>&#xBF;Para qu&#xE9;?</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content center" ref="primitives/intro/4">
+<p><img src="./file/primitives/wrong.jpg" width="450" height="583" alt="wrong"/></p>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="primitives/operations/1">
+<h1>Imaginemos que tenemos que simbolizar la computaci&#xF3;n</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="primitives/operations/2">
+<h2>Expresiones</h2>
+
+<ul>
+<li>Ten&#xE9;s s&#xED;mbolos</li>
+<li>Y listas (colecciones) de s&#xED;mbolos</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/3">
+<pre><span class="nv">zalgo</span> <span class="c1">;es un s&#xED;mbolo (y esto, un comentario)</span>
+<span class="p">()</span> <span class="c1">; lista</span>
+<span class="p">[]</span> <span class="c1">; lista</span>
+<span class="p">(</span><span class="nf">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">)</span> 
+<span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>  
+<span class="p">(</span><span class="nf">a</span> <span class="nv">b</span> <span class="p">(</span><span class="nf">c</span> <span class="nv">d</span><span class="p">))</span></pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="primitives/operations/4">
+<h2>Toda cosa interesante pasa dentro de las listas</h2>
+
+<ul>
+<li>El primer elemento se considera una <em>operaci&#xF3;n</em></li>
+<li>Los dem&#xE1;s, los <em>operandos</em></li>
+<li>El valor de la expresi&#xF3;n, si es una lista, es
+la  operaci&#xF3;n aplicada a los operandos</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/5">
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">10</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="mi">2</span> <span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="nb">/ </span><span class="mi">10</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">11</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="primitives/operations/6">
+<h1>Siete operaciones b&#xE1;sicas</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/7">
+<h2>1. quote: Devuelve su argumento</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">quote</span> <span class="nv">x</span><span class="p">)</span>
+<span class="go">x</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">quote</span> <span class="p">(</span><span class="nf">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="go">(a b c)</span>
+<span class="gp">user=&gt; </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">)</span>
+<span class="go">(a b c)</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/8">
+<h2>2. coll? : si el argumento es una colecci&#xF3;n</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">false</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="o">'</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">true</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">true</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/9">
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="p">(</span><span class="nf">coll?</span> <span class="ss">'x</span><span class="p">))</span>
+<span class="go">???</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="o">'</span><span class="p">(</span><span class="nv">coll?</span> <span class="ss">'x</span><span class="p">))</span>
+<span class="go">???</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/10">
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="p">(</span><span class="nf">coll?</span> <span class="ss">'x</span><span class="p">))</span>
+<span class="go">false</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">coll?</span> <span class="o">'</span><span class="p">(</span><span class="nv">coll?</span> <span class="ss">'x</span><span class="p">))</span>
+<span class="go">true</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/11">
+<h2>3. = : si sus argumentos valen lo mismo</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">false</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">= </span><span class="ss">'a</span> <span class="ss">'a</span><span class="p">)</span>
+<span class="go">true    </span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/12">
+<h2>4. first: primer elemento de la coll</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">first </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="go">a</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">first </span><span class="o">'</span><span class="p">[</span><span class="nv">c</span> <span class="nv">b</span> <span class="nv">a</span><span class="p">])</span>
+<span class="go">c</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/13">
+<h2>5. rest : la "cola" de la coll</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">rest </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="go">(b c)</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">rest </span><span class="o">'</span><span class="p">[</span><span class="nv">c</span> <span class="nv">b</span> <span class="nv">a</span><span class="p">])</span>
+<span class="go">(b a)</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="primitives/operations/14">
+<h2>6. cons: crea una lista con cabeza y cola</h2>
+
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">cons </span><span class="ss">'a</span> <span class="o">'</span><span class="p">(</span><span class="nv">b</span> <span class="nv">c</span> <span class="nv">d</span><span class="p">))</span>
+<span class="go">(a b c d)</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="nb">cons </span><span class="ss">'a</span> <span class="p">(</span><span class="nb">cons </span><span class="ss">'b</span> <span class="p">(</span><span class="nb">cons </span><span class="ss">'c</span> <span class="o">'</span><span class="p">())))</span>
+<span class="go">(a b c)</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="primitives/operations/15">
+<h2>7. cond</h2>
+
+<ul>
+<li>Recibe pares de expresiones, si la primera del par eval&#xFA;a a verdadero
+devuelve la segunda del par; si no, pasa al siguiente par</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content code smaller" ref="primitives/operations/16">
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nb">= </span><span class="ss">'a</span> <span class="ss">'b</span><span class="p">)</span> <span class="ss">'primero</span> <span class="p">(</span><span class="nf">coll?</span> <span class="o">'</span><span class="p">(</span><span class="nv">c</span> <span class="nv">d</span><span class="p">))</span> <span class="ss">'segundo</span><span class="p">)</span>
+<span class="go">segundo</span>
+<span class="gp">user=&gt; </span><span class="p">(</span><span class="k">cond </span><span class="nv">false</span> <span class="ss">'falso!</span> <span class="p">(</span><span class="nf">coll?</span> <span class="ss">'x</span><span class="p">)</span> <span class="ss">'?</span>  <span class="nv">true</span> <span class="ss">'verdadero!</span><span class="p">)</span>
+<span class="go">verdadero!</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functions/denoting/1">
+<h1>Funciones</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="functions/denoting/2">
+<ul>
+<li>Pod&#xED;amos aplicar una funci&#xF3;n</li>
+<li><code>(cons 'a '(b c d))</code></li>
+<li>&#xBF;C&#xF3;mo crear&#xED;amos las nuestras?</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functions/denoting/3">
+<h1><code>((fn [p1 p2 ...] exp) a1 a2 ...)</code></h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code small" ref="functions/denoting/4">
+<pre><span class="gp">user=&gt; </span><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">p1</span> <span class="nv">p2</span> <span class="nv">p3</span><span class="p">]</span> <span class="ss">'exp</span><span class="p">)</span> <span class="nv">a1</span> <span class="nv">a2</span> <span class="nv">a3</span><span class="p">)</span>
+<span class="gp">user=&gt; </span><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">(</span><span class="nb">cons </span><span class="nv">x</span> <span class="o">'</span><span class="p">(</span><span class="nv">b</span> <span class="nv">c</span><span class="p">)))</span> <span class="ss">'a</span><span class="p">)</span>
+<span class="go">(a b c)</span>
+<span class="gp">user=&gt; </span><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span> <span class="nv">y</span><span class="p">]</span> <span class="p">(</span><span class="nb">cons </span><span class="nv">x</span> <span class="nv">y</span><span class="p">))</span> <span class="ss">'a</span> <span class="o">'</span><span class="p">(</span><span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="go">(a b c)</span>
+<span class="gp">user=&gt; </span><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">f</span><span class="p">]</span> <span class="p">(</span><span class="nf">f</span> <span class="o">'</span><span class="p">(</span><span class="nv">b</span> <span class="nv">c</span><span class="p">)))</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">(</span><span class="nb">cons </span><span class="ss">'a</span> <span class="nv">x</span><span class="p">)))</span>
+<span class="go">(a b c)</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="functions/denoting/5">
+<h1><code>(def nombre (fn [p1 p2] ('algo-con-nombre)))</code></h1>
+
+<ul>
+<li>Con <code>def</code> podemos hacer que una funci&#xF3;n se
+pueda referir a s&#xED; misma</li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content code small" ref="functions/denoting/6">
+<pre><span class="p">((</span><span class="k">def </span><span class="nv">_last</span> 
+    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">l</span><span class="p">]</span> 
+        <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">rest </span><span class="nv">l</span><span class="p">)</span> <span class="o">'</span><span class="p">())</span> <span class="p">(</span><span class="nb">first </span><span class="nv">l</span><span class="p">)</span>
+              <span class="nv">true</span> <span class="p">(</span><span class="nf">_last</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">l</span><span class="p">)))))</span> <span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="c1">;devuelve c</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code small" ref="functions/denoting/7">
+<pre><span class="c1">;de atajo, digamos que (def f (fn [] exp))</span>
+<span class="c1">;sea: (defn f [] exp)</span>
+<span class="p">((</span><span class="k">defn </span><span class="nv">_last</span> <span class="p">[</span><span class="nv">l</span><span class="p">]</span>
+        <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">rest </span><span class="nv">l</span><span class="p">)</span> <span class="o">'</span><span class="p">())</span> <span class="p">(</span><span class="nb">first </span><span class="nv">l</span><span class="p">)</span>
+              <span class="nv">true</span> <span class="p">(</span><span class="nf">_last</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">l</span><span class="p">))))</span> <span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="c1">;devuelve c</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functions/denoting/8">
+<h1>Abreviaciones</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/denoting/9">
+<pre><span class="c1">;en vez de</span>
+<span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nb">first </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">)))</span>
+<span class="c1">;digamos</span>
+<span class="p">(</span><span class="nb">ffirst </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+<span class="c1">;o</span>
+<span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nb">rest </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">)))</span>
+<span class="c1">;mejor</span>
+<span class="p">(</span><span class="nb">frest </span><span class="o">'</span><span class="p">(</span><span class="nv">a</span> <span class="nv">b</span> <span class="nv">c</span><span class="p">))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/denoting/10">
+<pre><span class="c1">;en vez de </span>
+<span class="p">(</span><span class="nb">cons </span><span class="ss">'a</span> <span class="p">(</span><span class="nb">cons </span><span class="ss">'b</span> <span class="p">(</span><span class="nb">cons </span><span class="ss">'c</span> <span class="o">'</span><span class="p">())))</span>
+<span class="c1">;digamos</span>
+<span class="p">(</span><span class="nb">list </span><span class="ss">'a</span> <span class="ss">'b</span> <span class="ss">'c</span><span class="p">)</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functions/some/1">
+<h1>Algunas funciones</h1>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/2">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">_and</span> <span class="p">[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="nv">a</span> <span class="p">(</span><span class="k">cond </span><span class="nv">b</span> <span class="nv">true</span> <span class="nv">true</span> <span class="nv">false</span><span class="p">)</span>
+        <span class="nv">true</span> <span class="nv">false</span><span class="p">))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/3">
+<pre><span class="gp">user=&gt; </span><span class="p">(</span><span class="nf">_and</span> <span class="p">(</span><span class="nb">= </span><span class="ss">'a</span> <span class="ss">'a</span><span class="p">)</span> <span class="p">(</span><span class="nf">coll?</span> <span class="o">'</span><span class="p">()))</span>
+<span class="go">true</span>
+<span class="go">(_and (= 'a b) (coll? '()))</span>
+<span class="go">false</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/4">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">_or</span> <span class="p">[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="nv">a</span> <span class="nv">true</span>
+        <span class="nv">b</span> <span class="nv">true</span>
+        <span class="nv">true</span> <span class="nv">false</span><span class="p">))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/5">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">_not</span> <span class="p">[</span><span class="nv">e</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="nv">e</span> <span class="nv">false</span> <span class="nv">true</span> <span class="nv">true</span><span class="p">))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/6">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">_empty?</span> <span class="p">[</span><span class="nv">l</span><span class="p">]</span>
+  <span class="p">(</span><span class="nf">_or</span> <span class="p">(</span><span class="nb">= </span><span class="nv">l</span> <span class="p">[])</span> <span class="p">(</span><span class="nb">= </span><span class="nv">l</span> <span class="o">'</span><span class="p">())))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code smaller" ref="functions/some/7">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">append</span> <span class="p">[</span><span class="nv">x</span> <span class="nv">y</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nf">_empty?</span> <span class="nv">x</span><span class="p">)</span> <span class="nv">y</span>
+        <span class="nv">true</span> <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nb">first </span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">append</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">x</span><span class="p">)</span> <span class="nv">y</span><span class="p">))))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code smaller" ref="functions/some/8">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">pair-up</span> <span class="p">[</span><span class="nv">x</span> <span class="nv">y</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nf">_and</span> <span class="p">(</span><span class="nf">_empty?</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">_empty?</span> <span class="nv">y</span><span class="p">))</span> <span class="o">'</span><span class="p">()</span>
+        <span class="p">(</span><span class="nf">_and</span> <span class="p">(</span><span class="nf">coll?</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">coll?</span> <span class="nv">y</span><span class="p">))</span> 
+          <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nb">first </span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nb">first </span><span class="nv">y</span><span class="p">))</span>
+                <span class="p">(</span><span class="nf">pair-up</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">y</span><span class="p">)))))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code smaller" ref="functions/some/9">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">lookup</span> <span class="p">[</span><span class="nv">sym</span> <span class="nv">env</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">env</span><span class="p">)</span> <span class="nv">false</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">ffirst </span><span class="nv">env</span><span class="p">)</span> <span class="nv">sym</span><span class="p">)</span> <span class="p">(</span><span class="nf">frfirst</span> <span class="nv">env</span><span class="p">)</span>
+        <span class="nv">true</span> <span class="p">(</span><span class="nf">lookup</span> <span class="nv">sym</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">env</span><span class="p">))))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code smaller" ref="functions/some/10">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">_eval</span> <span class="p">[</span><span class="nv">exp</span> <span class="nv">env</span><span class="p">]</span>
+  <span class="c1">;(pprint [exp env])</span>
+  <span class="p">(</span><span class="k">cond </span>
+    <span class="p">(</span><span class="nf">_not</span> <span class="p">(</span><span class="nf">coll?</span> <span class="nv">exp</span><span class="p">))</span> <span class="p">(</span><span class="nf">lookup</span> <span class="nv">exp</span> <span class="nv">env</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">_not</span> <span class="p">(</span><span class="nf">coll?</span> <span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)))</span>
+      <span class="p">(</span><span class="k">cond </span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'quote</span><span class="p">)</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'coll?</span><span class="p">)</span> <span class="p">(</span><span class="nf">coll?</span> <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'=</span><span class="p">)</span> <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+                              <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nf">frrest</span> <span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'first</span><span class="p">)</span> <span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'rest</span><span class="p">)</span>  <span class="p">(</span><span class="nb">rest </span> <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'cons</span><span class="p">)</span>  <span class="p">(</span><span class="nb">cons </span> <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+                                      <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nf">frrest</span> <span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'cond</span><span class="p">)</span>  <span class="p">(</span><span class="nf">evcond</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+        <span class="c1">;eval the body of the proc</span>
+        <span class="nv">true</span> <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nf">lookup</span> <span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+                          <span class="p">(</span><span class="nb">rest </span><span class="nv">exp</span><span class="p">))</span>
+                    <span class="nv">env</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">ffirst </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'def</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nf">frrfirst</span> <span class="nv">exp</span><span class="p">)</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">exp</span><span class="p">))</span>
+             <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nf">frfirst</span> <span class="nv">exp</span><span class="p">)</span> <span class="p">(</span><span class="nb">first </span><span class="nv">exp</span><span class="p">))</span> <span class="nv">env</span><span class="p">))</span>
+    <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">ffirst </span><span class="nv">exp</span><span class="p">)</span> <span class="ss">'fn</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nf">frrfirst</span> <span class="nv">exp</span><span class="p">)</span>
+             <span class="p">(</span><span class="nf">append</span> <span class="p">(</span><span class="nf">pair-up</span> <span class="p">(</span><span class="nf">frfirst</span> <span class="nv">exp</span><span class="p">)</span> 
+                              <span class="p">(</span><span class="nf">evlist</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">exp</span><span class="p">)</span> <span class="nv">env</span><span class="p">))</span>
+                     <span class="nv">env</span><span class="p">))))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/11">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">evcond</span> <span class="p">[</span><span class="nv">clauses</span> <span class="nv">env</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span>
+    <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">first </span><span class="nv">clauses</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">frest </span><span class="nv">clauses</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+    <span class="nv">true</span> <span class="p">(</span><span class="nf">evcond</span> <span class="p">(</span><span class="nb">rrest </span><span class="nv">clauses</span><span class="p">)</span> <span class="nv">env</span><span class="p">)))</span> 
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content code" ref="functions/some/12">
+<pre><span class="p">(</span><span class="k">defn </span><span class="nv">evlist</span> <span class="p">[</span><span class="nv">m</span> <span class="nv">env</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">cond </span>
+    <span class="p">(</span><span class="nf">_empty?</span> <span class="nv">m</span><span class="p">)</span> <span class="o">'</span><span class="p">()</span>
+    <span class="nv">true</span> <span class="p">(</span><span class="nb">cons </span><span class="p">(</span><span class="nf">_eval</span> <span class="p">(</span><span class="nb">first </span><span class="nv">m</span><span class="p">)</span> <span class="nv">env</span><span class="p">)</span>
+               <span class="p">(</span><span class="nf">evlist</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">m</span><span class="p">)</span> <span class="nv">env</span><span class="p">))))</span>
+</pre>
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="functions/some/13">
+<h2>Referencias</h2>
+
+<ul>
+<li><a href="http://www-formal.stanford.edu/jmc/recursive/recursive.html">El trabajo original de McCarthy</a></li>
+<li><a href="http://www.paulgraham.com/rootsoflisp.html">La re-interpretaci&#xF3;n de Paul Graham</a></li>
+<li><a href="http://clojure.org/">Clojure</a></li>
+<li><a href="http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/">El curso que va a cambiar tu vida</a></li>
+<li><a href="http://www.delicious.com/lfborjas/barcamp4+lisp">Bookmarks en delicious</a></li>
+</ul>
+
+</div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="functions/some/14">
+<h2>C&#xF3;digo</h2>
+
+<ul>
+<li><a href="https://github.com/lfborjas/minimalisp/tree/clojure">El c&#xF3;digo fuente en esta presentaci&#xF3;n</a></li>
+<li><a href="https://github.com/lfborjas/minimalisp/tree/javascript">Lisp en javascript</a></li>
+<li><a href="https://github.com/lfborjas/minimalisp">Lisp en ruby</a></li>
+<li><a href="http://norvig.com/lispy.html">Lisp en python</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+
+</body>
+</html>
