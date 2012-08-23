@@ -26,6 +26,13 @@
 (defn rrest [l]
   (rest (rest l)))
 
+(defn frfrest [l]
+  (-> l rest first rest first))
+
+(defn ffrest [l]
+  (-> l rest first first))
+
+
 ;the functions:
 
 (defn _and [a b]
@@ -50,7 +57,7 @@
 (defn pair-up [x y]
   (cond (_and (_empty? x) (_empty? y)) '()
         (_and (coll? x) (coll? y)) 
-          (cons (list (first x) (first y))
+          (cons (cons (first x) (cons (first y) '()))
                 (pair-up (rest x) (rest y)))))
 
 (defn lookup [sym env]
@@ -58,35 +65,34 @@
         (= (ffirst env) sym) (frfirst env)
         true (lookup sym (rest env))))
 
-(declare _eval evcond evlist)
+(declare _eval evcond evlist _apply)
 
 (defn _eval [exp env]
-  ;(pprint [exp env])
-  (cond 
-    (_not (coll? exp)) (lookup exp env)
-    (_not (coll? (first exp)))
-      (cond 
-        (= (first exp) 'quote) (frest exp)
-        (= (first exp) 'coll?) (coll? (_eval (frest exp) env))
-        (= (first exp) '=) (= (_eval (frest exp) env)
-                              (_eval (frrest exp) env))
-        (= (first exp) 'first) (first (_eval (frest exp) env))
-        (= (first exp) 'rest)  (rest  (_eval (frest exp) env))
-        (= (first exp) 'cons)  (cons  (_eval (frest exp) env)
-                                      (_eval (frrest exp) env))
-        (= (first exp) 'cond)  (evcond (rest exp) env)
-        ;eval the body of the proc
-        true (_eval (cons (lookup (first exp) env)
-                          (rest exp))
-                    env))
-    (= (ffirst exp) 'def)
-      (_eval (cons (frrfirst exp) (rest exp))
-             (cons (list (frfirst exp) (first exp)) env))
-    (= (ffirst exp) 'fn)
-      (_eval (frrfirst exp)
-             (append (pair-up (frfirst exp) 
-                              (evlist (rest exp) env))
-                     env))))
+    (cond 
+      (_not (coll? exp)) (lookup exp env)
+      (= (first exp) 'quote) (frest exp)
+      (= (first exp) 'coll?) (coll? (_eval (frest exp) env))
+      (= (first exp) '=) (= (_eval (frest exp) env)
+                            (_eval (frrest exp) env))
+      (= (first exp) 'first) (first (_eval (frest exp) env))
+      (= (first exp) 'rest)  (rest  (_eval (frest exp) env))
+      (= (first exp) 'cons)  (cons  (_eval (frest exp) env)
+                                    (_eval (frrest exp) env))
+      (= (first exp) 'cond)  (evcond (rest exp) env)
+      (= (first exp) 'fn )  (list 'closure (rest exp) env)
+      true (_apply (_eval  (first exp) env)
+                   (evlist (rest  exp) env))))
+
+(defn _apply [proc args]
+  (cond
+    (= (first proc) 'closure) 
+      (_eval 
+        (frfrest proc) ;body of the procedure
+        (append ;build a new environment:
+          (pair-up (ffrest proc) args) ;map the formal arguments to the parameters
+          (frrest proc))) ;the environment that this proc was closed upon
+    true 'unrecognized-expression))
+
 
 (defn evcond [clauses env]
   (cond 
