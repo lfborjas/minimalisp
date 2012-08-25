@@ -79,7 +79,7 @@
       (= (first exp) 'cons)  (cons  (_eval (frest exp) env)
                                     (_eval (frrest exp) env))
       (= (first exp) 'cond)  (evcond (rest exp) env)
-      (= (first exp) 'fn )  (list 'closure (rest exp) env)
+      (= (first exp) 'lambda)  (list 'closure (rest exp) env)
       true (_apply (_eval  (first exp) env)
                    (evlist (rest  exp) env))))
 
