@@ -53,7 +53,7 @@ class Object
         if m.to_s =~ /c[ad]+r/
             rval = self
             m.to_s.reverse.slice(1..-2).each_char do |f|
-                rval = rval.send(if f == 'a' then :car else :cdr end) 
+                rval = rval.send(f == 'a' ? :car : :cdr) 
             end
             rval
         end
